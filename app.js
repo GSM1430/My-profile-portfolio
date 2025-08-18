@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initProjectFilters();
     initFormValidation();
     initNavbarScroll();
+    initParticles();
+    initCounters();
+    initSkillHover();
 });
 
 // Mobile Navigation Menu Toggle
@@ -411,6 +414,84 @@ function initRevealAnimations() {
 
 // Initialize reveal animations
 document.addEventListener('DOMContentLoaded', initRevealAnimations);
+
+// Floating Particles Animation
+function initParticles() {
+    const particlesContainer = document.querySelector('.particles');
+    if (!particlesContainer) return;
+    
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Animated Counters
+function initCounters() {
+    const counters = document.querySelectorAll('.stat-number[data-count]');
+    
+    const observerOptions = {
+        threshold: 0.5
+    };
+    
+    const counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    counters.forEach(counter => {
+        counterObserver.observe(counter);
+    });
+}
+
+function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-count'));
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+    
+    const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+            element.textContent = target + (target === 100 ? '%' : '+');
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current) + (target === 100 ? '%' : '+');
+        }
+    }, 16);
+}
+
+// Enhanced Skill Interactions
+function initSkillHover() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    
+    skillItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            const skillBar = this.querySelector('.skill-progress');
+            if (skillBar) {
+                skillBar.style.background = 'linear-gradient(90deg, var(--color-primary), var(--color-teal-300))';
+                skillBar.style.boxShadow = '0 2px 10px rgba(var(--color-teal-500-rgb), 0.3)';
+            }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            const skillBar = this.querySelector('.skill-progress');
+            if (skillBar) {
+                skillBar.style.background = 'var(--color-primary)';
+                skillBar.style.boxShadow = 'none';
+            }
+        });
+    });
+}
 
 // Add loading animation
 window.addEventListener('load', function() {
